@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "next",
+    "start": "next build && next start",
+    "deploy": "now",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
