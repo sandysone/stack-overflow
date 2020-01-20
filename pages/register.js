@@ -1,5 +1,6 @@
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
+import Link from 'next/link'
 
 export default () => (
   <>
@@ -22,15 +23,22 @@ export default () => (
       <Button variant="primary" type="submit">
         {'Register'}
       </Button>
+    </Form>
 
-      <style jsx global>{`
+    <br />
+
+    <Link href="/">
+      <a>Back to Login Page</a>
+    </Link>
+
+    <style jsx global>{`
       body {
         margin: 0 auto;
         max-width: 30em;
         margin-top: 20px;
         padding: 0 15px;
       }
-      `}</style>
-    </Form>
+      `}
+    </style>
   </>
 )
