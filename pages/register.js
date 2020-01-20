@@ -1,10 +1,25 @@
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Link from 'next/link'
+import Router from 'next/router'
+
+import { nativeFetcher } from '../lib/fetcher'
+
+const handleSubmit = async (event) => {
+  event.preventDefault()
+
+  const { username, password } = event.target
+
+  const content = await nativeFetcher('/register', 'POST', { username: username.value, password: password.value })
+
+  console.log(content)
+
+  Router.push('/questions')
+}
 
 export default () => (
   <>
-    <Form>
+    <Form onSubmit={handleSubmit}>
       <Form.Group controlId="photo">
         <Form.Label>Selfie</Form.Label>
         <Form.Control type="file" capture="camera" accept="image/*" />
@@ -30,15 +45,5 @@ export default () => (
     <Link href="/">
       <a>Back to Login Page</a>
     </Link>
-
-    <style jsx global>{`
-      body {
-        margin: 0 auto;
-        max-width: 30em;
-        margin-top: 20px;
-        padding: 0 15px;
-      }
-      `}
-    </style>
   </>
 )

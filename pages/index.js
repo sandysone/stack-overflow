@@ -1,43 +1,26 @@
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Link from 'next/link'
-import useSWR, { mutate } from 'swr'
+import Router from 'next/router'
 
-import { fetcherGraphQL } from '../lib/fetcher'
-import { fetcherREST } from '../lib/fetcher'
+import { nativeFetcher } from '../lib/fetcher'
 
-const submit = async (event) => {
+const handleSubmit = async (event) => {
   event.preventDefault()
 
   const { username, password } = event.target
 
-  console.log(username.value)
-  console.log(password.value)
+  const content = await nativeFetcher('/login', 'POST', { username: username.value, password: password.value })
 
-  // mutate('/api/user', { username: username.value, password: password.value })
-
-  const rawResponse = await fetch('/api/user', {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ username: username.value, password: password.value })
-  })
-
-  const content = await rawResponse.json()
   console.log(content)
+
+  Router.push('/questions')
 }
 
 const Index = () => {
-  // const { data, error } = useSWR(query, fetcher)
-
-  // if (error) return <Error description="Could not fetch" />
-  // if (!data) return <Loading />
-
   return (
     <>
-      <Form onSubmit={submit}>
+      <Form onSubmit={handleSubmit}>
         <Form.Group controlId="username">
           <Form.Label>Username</Form.Label>
           <Form.Control autoComplete="username" />
@@ -58,16 +41,6 @@ const Index = () => {
       <Link href="/register">
         <a>Create Account</a>
       </Link>
-
-      <style jsx global>{`
-      body {
-        margin: 0 auto;
-        max-width: 30em;
-        margin-top: 20px;
-        padding: 0 15px;
-      }
-      `}
-      </style>
     </>
   )
 }
