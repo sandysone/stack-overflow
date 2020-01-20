@@ -3,16 +3,10 @@ import Button from 'react-bootstrap/Button'
 import Link from 'next/link'
 import useSWR, { mutate } from 'swr'
 
-import { fetcher } from '../lib/fetcher'
+import { fetcherGraphQL } from '../lib/fetcher'
+import { fetcherREST } from '../lib/fetcher'
 
-const createUser = `
-mutation {
-  createAppUser(data: {username: "test", password: "test"}) {
-    id
-  }
-}`
-
-const submit = (event) => {
+const submit = async (event) => {
   event.preventDefault()
 
   const { username, password } = event.target
@@ -20,7 +14,19 @@ const submit = (event) => {
   console.log(username.value)
   console.log(password.value)
 
-  mutate('/api/user', { ...data, name: newName })
+  // mutate('/api/user', { username: username.value, password: password.value })
+
+  const rawResponse = await fetch('/api/user', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ username: username.value, password: password.value })
+  })
+
+  const content = await rawResponse.json()
+  console.log(content)
 }
 
 const Index = () => {
