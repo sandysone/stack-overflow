@@ -1,40 +1,32 @@
 import bcrypt from 'bcryptjs'
-import { graphQLClient } from './client'
 
-const cookieName = 'token'
+import { graphQLClient } from './_client'
+import { cookieName, cookieOptions } from './_cookie'
 
-const createCookie = (userId, context) => {
-  const args = [
-    cookieName,
-    userId,
-    {
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 365,
-    },
-  ]
+// module.exports = (req, res) => {
+//   res.json({
+//     body: req.body,
+//     query: req.query,
+//     cookies: req.cookies
+//   })
+// }
 
-  context.response.cookie(...args)
-}
-
-// context.response.clearCookie(cookieName)
-
-
-const createUser = async (req, res) => {
-  const { username, password } = req.body
+const register = async (request, response) => {
+  const { username, password } = request.body
   const hashedPassword = await bcrypt.hash(password, 10)
 
-  const createUser = `
-  mutation createUser($username: String!, $password: String!) {
+  const createUserQuery = `
+  mutation register($username: String!, $password: String!) {
     createAppUser(data: {username: $username, password: $password}) {
       id
     }
   }`
 
-  const response = await graphQLClient.request(createUser, { username, password: hashedPassword })
+  const { createAppUser } = await graphQLClient.request(createUserQuery, { username, password: hashedPassword })
 
-  // createCookie(user.id, context)
+  response.cookie(cookieName, createAppUser.id, cookieOptions)
 
-  res.status(200).json({ data: response.createAppUser })
+  response.status(200).json({ data: createAppUser.id })
 }
 
-export default createUser
+export default register
