@@ -14,7 +14,9 @@ const handleSubmit = async (event) => {
 
   console.log(content)
 
-  Router.push('/questions')
+  if (content.data) {
+    Router.push('/questions')
+  }
 }
 
 const Index = () => {

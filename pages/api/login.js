@@ -13,7 +13,7 @@ const login = async (req, res) => {
 
   const response = await graphQLClient.request(loginUser, { username })
 
-  const valid = await bcrypt.compare(password, response.appUser.password)
+  const valid = await bcrypt.compare(password, String(response.appUser?.password))
 
   res.status(200).json({ data: valid })
 }
