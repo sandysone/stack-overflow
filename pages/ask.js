@@ -46,10 +46,6 @@ const Question = (props) => {
 Question.getInitialProps = async (context) => {
   const { query } = context
 
-  // const res = await fetch('https://api.github.com/repos/zeit/next.js')
-  // const json = await res.json()
-  // return { stars: json.stargazers_count }
-
   return { query }
 }
 

@@ -1,7 +1,8 @@
 import Navbar from 'react-bootstrap/Navbar'
 import Button from 'react-bootstrap/Button'
+import Link from 'next/link'
 
-export const Navbar = () => {
+export const NavigationBar = () => {
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Brand>Stack Overflow</Navbar.Brand>

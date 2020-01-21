@@ -1,7 +1,8 @@
 import ListGroup from 'react-bootstrap/ListGroup'
 import Link from 'next/link'
 
-import { Navbar } from '../components/Navbar'
+import { NavigationBar } from '../components/Navbar'
+import { graphQLClient } from './api/client'
 
 const queryQuestions = `
 query questions {
@@ -23,26 +24,22 @@ const mapQuestions = (question) => {
   )
 }
 
-const Questions = () => {
+const Questions = ({ questions }) => {
   return (
     <>
-      <Navbar />
+      <NavigationBar />
 
       <ListGroup>
-        {[].map(mapQuestions)}
+        {questions.map(mapQuestions)}
       </ListGroup>
     </>
   )
 }
 
-Questions.getInitialProps = async (context) => {
-  const { query } = context
+Questions.getInitialProps = async () => {
+  const { questions } = await graphQLClient.request(queryQuestions)
 
-  // const res = await fetch('https://api.github.com/repos/zeit/next.js')
-  // const json = await res.json()
-  // return { stars: json.stargazers_count }
-
-  return { query }
+  return { questions }
 }
 
 export default Questions
