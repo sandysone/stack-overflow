@@ -1,4 +1,5 @@
 import ListGroup from 'react-bootstrap/ListGroup'
+import Router from 'next/router'
 import Link from 'next/link'
 
 import { NavigationBar } from '../components/Navbar'
@@ -24,7 +25,11 @@ const mapQuestions = (question) => {
   )
 }
 
-const Questions = ({ questions, username }) => {
+const Questions = ({ questions, username, redirect }) => {
+  if (redirect && typeof window !== 'undefined') {
+    Router.push('/')
+  }
+
   return (
     <>
       <NavigationBar username={username} />
@@ -37,6 +42,8 @@ const Questions = ({ questions, username }) => {
 }
 
 Questions.getInitialProps = async (context) => {
+  const isLogged = context?.req?.headers?.cookie
+
   const username = context?.req?.headers?.cookie
     ?.split(';')
     ?.find(pair => pair.includes('username'))
@@ -45,7 +52,7 @@ Questions.getInitialProps = async (context) => {
 
   const { questions } = await graphQLClient.request(queryQuestions)
 
-  return { questions, username }
+  return { questions, username, redirect: !isLogged }
 }
 
 export default Questions

@@ -19,23 +19,29 @@ mutation ask($title: String!, $description: String!, $userId: ID!) {
 }
 `
 
-const handleSubmit = (event) => {
+const handleSubmit = (id) => (event) => {
   event.preventDefault()
 
-  const { title, answer } = event.target
+  const { title, description } = event.target
+
+  console.log(title.value, description.value, id)
 }
 
-const Question = () => {
+const Ask = ({ id, redirect }) => {
+  if (redirect && typeof window !== 'undefined') {
+    Router.push('/')
+  }
+
   return (
     <>
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit(id)}>
         <Form.Group controlId="title">
           <Form.Label>Title</Form.Label>
           <Form.Control />
         </Form.Group>
 
-        <Form.Group controlId="answer">
-          <Form.Label>Answer</Form.Label>
+        <Form.Group controlId="description">
+          <Form.Label>Description</Form.Label>
           <Form.Control as="textarea" rows="3" />
         </Form.Group>
 
@@ -47,4 +53,16 @@ const Question = () => {
   )
 }
 
-export default Question
+Ask.getInitialProps = (context) => {
+  const isLogged = context?.req?.headers?.cookie
+
+  const id = context?.req?.headers?.cookie
+    ?.split(';')
+    ?.find(pair => pair.includes('id'))
+    ?.split('=')[1]
+    ?.trim()
+
+  return { id, redirect: !isLogged }
+}
+
+export default Ask

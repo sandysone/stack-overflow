@@ -38,7 +38,19 @@ mutation answer($answerId: ID!, $userId: ID!, $answer: String!) {
 }
 `
 
-const Question = (props) => {
+const handleSubmit = (id) => () => {
+  event.preventDefault()
+
+  const { answer } = event.target
+
+  console.log(answer.value, id)
+}
+
+const Question = ({ id, redirect }) => {
+  if (redirect && typeof window !== 'undefined') {
+    Router.push('/')
+  }
+
   // const { data, error } = useSWR(anserQuery, fetcherGraphQL)
 
   // if (error) return <Error description="Could not fetch" />
@@ -46,14 +58,7 @@ const Question = (props) => {
 
   return (
     <>
-      <Head>
-        <link rel="manifest" href={"~/manifest.json"} />
-        <link rel="shortcut icon" href={"~/favicon.png"} />
-      </Head>
-
-      <pre>{JSON.stringify(props, null, 2)}</pre>
-
-      <Form>
+      <Form onSubmit={handleSubmit(id)}>
         <Form.Group controlId="answer">
           <Form.Label>Answer</Form.Label>
           <Form.Control as="textarea" rows="3" />
@@ -62,20 +67,21 @@ const Question = (props) => {
         <Button variant="primary" type="submit">
           {'Post Answer'}
         </Button>
-
       </Form>
     </>
   )
 }
 
 Question.getInitialProps = async (context) => {
-  const { query } = context
+  const isLogged = context?.req?.headers?.cookie
 
-  // const res = await fetch('https://api.github.com/repos/zeit/next.js')
-  // const json = await res.json()
-  // return { stars: json.stargazers_count }
+  const id = context?.req?.headers?.cookie
+    ?.split(';')
+    ?.find(pair => pair.includes('id'))
+    ?.split('=')[1]
+    ?.trim()
 
-  return { query }
+  return { id, redirect: !isLogged }
 }
 
 export default Question
