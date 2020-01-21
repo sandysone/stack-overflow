@@ -1,8 +1,8 @@
 import ListGroup from 'react-bootstrap/ListGroup'
 import Navbar from 'react-bootstrap/Navbar'
 import Button from 'react-bootstrap/Button'
+// import Router from 'next/router'
 import Link from 'next/link'
-import Head from 'next/head'
 
 const fakeQuestions = [
   { id: 1, title: 'How to batch React setState() calls together inside an async function?' },
@@ -24,16 +24,13 @@ const mapQuestions2 = (question) => {
 
 export default () => (
   <>
-    <Head>
-      {/* <link rel="manifest" href="../manifest.json" /> */}
-      <link rel="shortcut icon" href="../favicon.png" />
-    </Head>
-
     <Navbar bg="light" expand="lg">
-      <Navbar.Brand href="#home">Stack Overflow</Navbar.Brand>
-      <Button variant="primary">
-        {'Post Question'}
-      </Button>
+      <Navbar.Brand>Stack Overflow</Navbar.Brand>
+      <Link href="/ask">
+        <Button variant="primary">
+          {'Post Question'}
+        </Button>
+      </Link>
     </Navbar>
 
     <ListGroup>
