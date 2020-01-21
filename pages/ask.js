@@ -11,32 +11,21 @@ import { Loading } from '../components/Loading'
 import { Error } from '../components/Error'
 
 
-const query = `
-{
-  Movie(title: "Inception") {
-    title
-    releaseDate
-    actors {
-      name
-    }
+const createQuestion = `
+mutation ask($title: String!, $description: String!) {
+  createQuestion(data: { title: $title, description: $description }) {
+    id
   }
 }`
 
 const Question = (props) => {
-  // console.log(window.location.origin)
-  // console.log(Router)
-  const { data, error } = useSWR(query, fetcherGraphQL)
+  const { data, error } = useSWR(createQuestion, fetcherGraphQL)
 
   if (error) return <Error description="Could not fetch" />
   if (!data) return <Loading />
 
   return (
     <>
-      <Head>
-        <link rel="manifest" href={"~/manifest.json"} />
-        <link rel="shortcut icon" href={"~/favicon.png"} />
-      </Head>
-
       <pre>{JSON.stringify(props, null, 2)}</pre>
 
       <Form>
@@ -46,7 +35,7 @@ const Question = (props) => {
         </Form.Group>
 
         <Button variant="primary" type="submit">
-          {'Post Answer'}
+          {'Post Question'}
         </Button>
 
       </Form>
