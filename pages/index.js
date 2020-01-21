@@ -1,25 +1,32 @@
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
+import Spinner from 'react-bootstrap/Spinner'
 import Link from 'next/link'
 import Router from 'next/router'
+import { useState } from 'react'
 
 import { nativeFetcher } from '../lib/fetcher'
 
-const handleSubmit = async (event) => {
-  event.preventDefault()
-
-  const { username, password } = event.target
-
-  const content = await nativeFetcher('/login', 'POST', { username: username.value, password: password.value })
-
-  console.log(content)
-
-  if (content.data) {
-    Router.push('/questions')
-  }
-}
-
 const Index = () => {
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    setIsLoading(true)
+
+    const { username, password } = event.target
+
+    const content = await nativeFetcher('/login', 'POST', { username: username.value, password: password.value })
+
+    console.log(content)
+
+    if (content.data) {
+      Router.push('/questions')
+    }
+
+    setIsLoading(false)
+  }
+
   return (
     <>
       <Form onSubmit={handleSubmit}>
@@ -33,8 +40,8 @@ const Index = () => {
           <Form.Control type="password" autoComplete="current-password" />
         </Form.Group>
 
-        <Button variant="primary" type="submit">
-          {'Login'}
+        <Button variant="primary" type="submit" disabled={isLoading}>
+          {isLoading ? <Spinner animation="border" size="sm" /> : 'Login'}
         </Button>
       </Form>
 
