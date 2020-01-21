@@ -12,23 +12,28 @@ import { Error } from '../components/Error'
 
 
 const createQuestion = `
-mutation ask($title: String!, $description: String!) {
-  createQuestion(data: { title: $title, description: $description }) {
+mutation ask($title: String!, $description: String!, $userId: ID!) {
+  updateAppUser(data: {questions: {create: {title: $title, description: $description}}}, where: {id: $userId}) {
     id
   }
-}`
+}
+`
 
-const Question = (props) => {
-  const { data, error } = useSWR(createQuestion, fetcherGraphQL)
+const handleSubmit = (event) => {
+  event.preventDefault()
 
-  if (error) return <Error description="Could not fetch" />
-  if (!data) return <Loading />
+  const { title, answer } = event.target
+}
 
+const Question = () => {
   return (
     <>
-      <pre>{JSON.stringify(props, null, 2)}</pre>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group controlId="title">
+          <Form.Label>Title</Form.Label>
+          <Form.Control />
+        </Form.Group>
 
-      <Form>
         <Form.Group controlId="answer">
           <Form.Label>Answer</Form.Label>
           <Form.Control as="textarea" rows="3" />
@@ -37,16 +42,9 @@ const Question = (props) => {
         <Button variant="primary" type="submit">
           {'Post Question'}
         </Button>
-
       </Form>
     </>
   )
-}
-
-Question.getInitialProps = async (context) => {
-  const { query } = context
-
-  return { query }
 }
 
 export default Question

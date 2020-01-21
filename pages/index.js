@@ -20,7 +20,9 @@ const Index = () => {
 
     console.log(content)
 
-    if (content.data) {
+    if (content.data?.valid) {
+      document.cookie = `id=${content.data.id}`
+      document.cookie = `username=${content.data.username}`
       Router.push('/questions')
     }
 

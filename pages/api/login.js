@@ -1,21 +1,24 @@
 import bcrypt from 'bcryptjs'
-import { graphQLClient } from './client'
 
-const login = async (req, res) => {
-  const { username, password } = req.body
+import { graphQLClient } from './_client'
 
-  const loginUser = `
+const login = async (request, response) => {
+  const { username, password } = request.body
+
+  const loginQuery = `
   query login($username: String!) {
     appUser(where: {username: $username}) {
+      id
+      username
       password
     }
   }`
 
-  const response = await graphQLClient.request(loginUser, { username })
+  const { appUser } = await graphQLClient.request(loginQuery, { username })
 
-  const valid = await bcrypt.compare(password, String(response.appUser?.password))
+  const valid = await bcrypt.compare(password, String(appUser?.password))
 
-  res.status(200).json({ data: valid })
+  response.status(200).json({ data: { valid, id: appUser?.id, username: appUser?.username } })
 }
 
 export default login

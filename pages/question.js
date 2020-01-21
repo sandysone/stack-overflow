@@ -11,24 +11,38 @@ import { Loading } from '../components/Loading'
 import { Error } from '../components/Error'
 
 
-const query = `
-{
-  Movie(title: "Inception") {
-    title
-    releaseDate
-    actors {
-      name
-    }
+const createAnswerQuery = `
+mutation answer($answer: String!, $userId: ID!) {
+  updateAppUser(data: {answers: {create: {answer: $answer}}}, where: {id: $userId}) {
+    id
   }
-}`
+}
+`
+
+const updateAnswerQuery = `
+mutation answer($answerId: ID!, $userId: ID!, $answer: String!) {
+  updateAppUser(data: {
+    answers: {
+      update: {
+        data: {answer: $answer}
+        where: {
+          id: $answerId
+        }
+      }
+    }
+  }, 
+    where: {id: $userId
+    }) {
+    id
+  }
+}
+`
 
 const Question = (props) => {
-  // console.log(window.location.origin)
-  // console.log(Router)
-  const { data, error } = useSWR(query, fetcherGraphQL)
+  // const { data, error } = useSWR(anserQuery, fetcherGraphQL)
 
-  if (error) return <Error description="Could not fetch" />
-  if (!data) return <Loading />
+  // if (error) return <Error description="Could not fetch" />
+  // if (!data) return <Loading />
 
   return (
     <>

@@ -2,7 +2,7 @@ import ListGroup from 'react-bootstrap/ListGroup'
 import Link from 'next/link'
 
 import { NavigationBar } from '../components/Navbar'
-import { graphQLClient } from './api/client'
+import { graphQLClient } from './api/_client'
 
 const queryQuestions = `
 query questions {
@@ -24,10 +24,10 @@ const mapQuestions = (question) => {
   )
 }
 
-const Questions = ({ questions }) => {
+const Questions = ({ questions, username }) => {
   return (
     <>
-      <NavigationBar />
+      <NavigationBar username={username} />
 
       <ListGroup>
         {questions.map(mapQuestions)}
@@ -36,10 +36,16 @@ const Questions = ({ questions }) => {
   )
 }
 
-Questions.getInitialProps = async () => {
+Questions.getInitialProps = async (context) => {
+  const username = context?.req?.headers?.cookie
+    ?.split(';')
+    ?.find(pair => pair.includes('username'))
+    ?.split('=')[1]
+    ?.trim()
+
   const { questions } = await graphQLClient.request(queryQuestions)
 
-  return { questions }
+  return { questions, username }
 }
 
 export default Questions
