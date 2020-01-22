@@ -38,7 +38,7 @@ mutation answer($answerId: ID!, $userId: ID!, $answer: String!) {
 }
 `
 
-const handleSubmit = (id) => () => {
+const handleSubmit = (id) => (event) => {
   event.preventDefault()
 
   const { answer } = event.target

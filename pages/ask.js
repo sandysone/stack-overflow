@@ -54,7 +54,7 @@ const Ask = ({ id, redirect }) => {
 }
 
 Ask.getInitialProps = (context) => {
-  const isLogged = context?.req?.headers?.cookie
+  // const isLogged = context?.req?.headers?.cookie
 
   const id = context?.req?.headers?.cookie
     ?.split(';')
@@ -62,7 +62,7 @@ Ask.getInitialProps = (context) => {
     ?.split('=')[1]
     ?.trim()
 
-  return { id, redirect: !isLogged }
+  return { id, redirect: false }
 }
 
 export default Ask

@@ -21,9 +21,11 @@ const Index = () => {
     console.log(content)
 
     if (content.data?.valid) {
-      document.cookie = `id=${content.data.id}`
-      document.cookie = `username=${content.data.username}`
+      document.cookie = `id=${content.data.id}`;
+      document.cookie = `username=${content.data.username}`;
+      console.log('before redirect')
       Router.push('/questions')
+      console.log('after redirect')
     }
 
     setIsLoading(false)

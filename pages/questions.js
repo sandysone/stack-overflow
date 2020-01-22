@@ -42,7 +42,7 @@ const Questions = ({ questions, username, redirect }) => {
 }
 
 Questions.getInitialProps = async (context) => {
-  const isLogged = context?.req?.headers?.cookie
+  // const isLogged = context?.req?.headers?.cookie
 
   const username = context?.req?.headers?.cookie
     ?.split(';')
@@ -52,7 +52,7 @@ Questions.getInitialProps = async (context) => {
 
   const { questions } = await graphQLClient.request(queryQuestions)
 
-  return { questions, username, redirect: !isLogged }
+  return { questions, username, redirect: false }
 }
 
 export default Questions
