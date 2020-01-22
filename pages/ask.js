@@ -1,16 +1,11 @@
+import { useState } from 'react'
 import { useGlobal } from 'reactn'
-import ListGroup from 'react-bootstrap/ListGroup'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import Link from 'next/link'
-import Head from 'next/head'
+import Spinner from 'react-bootstrap/Spinner'
 import Router from 'next/router'
-import useSWR from 'swr'
 
-import { fetcherGraphQL } from '../lib/fetcher'
-import { Loading } from '../components/Loading'
-import { Error } from '../components/Error'
-
+import { graphQLClient } from './api/_client'
 
 const createQuestion = `
 mutation ask($title: String!, $description: String!, $userId: ID!) {
@@ -20,20 +15,33 @@ mutation ask($title: String!, $description: String!, $userId: ID!) {
 }
 `
 
-const handleSubmit = (id) => (event) => {
-  event.preventDefault()
-
-  const { title, description } = event.target
-
-  console.log(title.value, description.value, id)
-}
-
 const Ask = () => {
+  const [isLoading, setIsLoading] = useState(false)
   const [user] = useGlobal()
   console.log(user.username)
 
   if (typeof window !== 'undefined' && !user.username) {
     Router.push('/')
+  }
+
+  const handleSubmit = (id) => async (event) => {
+    event.preventDefault()
+    setIsLoading(true)
+
+    const { title, description } = event.target
+
+    console.log(title.value, description.value, id)
+
+    const response = await graphQLClient.request(
+      createQuestion,
+      { title: title.value, description: description.value, userId: id }
+    )
+
+    setIsLoading(false)
+
+    if (response?.updateAppUser) {
+      Router.push('/question?id=' + response.updateAppUser.id)
+    }
   }
 
   return (
@@ -49,8 +57,8 @@ const Ask = () => {
           <Form.Control as="textarea" rows="3" />
         </Form.Group>
 
-        <Button variant="primary" type="submit">
-          {'Post Question'}
+        <Button variant="primary" type="submit" disabled={isLoading}>
+          {isLoading ? <Spinner animation="border" size="sm" /> : 'Post Question'}
         </Button>
       </Form>
     </>
