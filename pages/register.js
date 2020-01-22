@@ -1,3 +1,4 @@
+import { useGlobal } from 'reactn'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Spinner from 'react-bootstrap/Spinner'
@@ -9,6 +10,7 @@ import { nativeFetcher } from '../lib/fetcher'
 
 const Register = () => {
   const [isLoading, setIsLoading] = useState(false)
+  const [user, setUser] = useGlobal()
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -21,8 +23,7 @@ const Register = () => {
     console.log(content)
 
     if (content.data?.valid) {
-      document.cookie = `id=${content.data.id}`
-      document.cookie = `username=${content.data.username}`
+      setUser({ id: content.data.id, username: content.data.username })
       Router.push('/questions')
     }
 

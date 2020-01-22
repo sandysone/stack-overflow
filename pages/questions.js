@@ -1,17 +1,10 @@
+import { useGlobal } from 'reactn'
 import ListGroup from 'react-bootstrap/ListGroup'
 import Router from 'next/router'
 import Link from 'next/link'
 
-import { NavigationBar } from '../components/Navbar'
 import { graphQLClient } from './api/_client'
-
-const queryQuestions = `
-query questions {
-  questions {
-    id
-    title
-  }
-}`
+import { NavigationBar } from '../components/Navbar'
 
 const mapQuestions = (question) => {
   const { id, title } = question
@@ -25,14 +18,17 @@ const mapQuestions = (question) => {
   )
 }
 
-const Questions = ({ questions, username, redirect }) => {
-  if (redirect && typeof window !== 'undefined') {
+const Questions = ({ questions }) => {
+  const [user] = useGlobal()
+  console.log(user.username)
+
+  if (typeof window !== 'undefined' && !user.username) {
     Router.push('/')
   }
 
   return (
     <>
-      <NavigationBar username={username} />
+      <NavigationBar username={user.username} />
 
       <ListGroup>
         {questions.map(mapQuestions)}
@@ -41,18 +37,18 @@ const Questions = ({ questions, username, redirect }) => {
   )
 }
 
-Questions.getInitialProps = async (context) => {
-  // const isLogged = context?.req?.headers?.cookie
-
-  const username = context?.req?.headers?.cookie
-    ?.split(';')
-    ?.find(pair => pair.includes('username'))
-    ?.split('=')[1]
-    ?.trim()
+Questions.getInitialProps = async () => {
+  const queryQuestions = `
+    query questions {
+      questions {
+        id
+        title
+      }
+    }`
 
   const { questions } = await graphQLClient.request(queryQuestions)
 
-  return { questions, username, redirect: false }
+  return { questions }
 }
 
 export default Questions

@@ -1,3 +1,4 @@
+import { useGlobal } from 'reactn'
 import ListGroup from 'react-bootstrap/ListGroup'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
@@ -27,14 +28,17 @@ const handleSubmit = (id) => (event) => {
   console.log(title.value, description.value, id)
 }
 
-const Ask = ({ id, redirect }) => {
-  if (redirect && typeof window !== 'undefined') {
+const Ask = () => {
+  const [user] = useGlobal()
+  console.log(user.username)
+
+  if (typeof window !== 'undefined' && !user.username) {
     Router.push('/')
   }
 
   return (
     <>
-      <Form onSubmit={handleSubmit(id)}>
+      <Form onSubmit={handleSubmit(user.id)}>
         <Form.Group controlId="title">
           <Form.Label>Title</Form.Label>
           <Form.Control />
@@ -51,18 +55,6 @@ const Ask = ({ id, redirect }) => {
       </Form>
     </>
   )
-}
-
-Ask.getInitialProps = (context) => {
-  // const isLogged = context?.req?.headers?.cookie
-
-  const id = context?.req?.headers?.cookie
-    ?.split(';')
-    ?.find(pair => pair.includes('id'))
-    ?.split('=')[1]
-    ?.trim()
-
-  return { id, redirect: false }
 }
 
 export default Ask
