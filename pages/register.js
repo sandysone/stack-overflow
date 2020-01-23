@@ -5,12 +5,40 @@ import Spinner from 'react-bootstrap/Spinner'
 import Link from 'next/link'
 import Router from 'next/router'
 import { useState } from 'react'
+import Webcam from 'react-webcam'
+// import { usePermission } from 'react-use'
 
 import { nativeFetcher } from '../lib/fetcher'
 
 const Register = () => {
+  // const state = usePermission({ name: 'camera' })
   const [isLoading, setIsLoading] = useState(false)
+  const [image, setImage] = useState('')
   const [user, setUser] = useGlobal()
+
+  // if (typeof window !== 'undefined') {
+  //   navigator.getUserMedia({ video: true }, (localMediaStream) => {
+  //     console.log(localMediaStream)
+  //   }, (error) => { })
+  // }
+
+  // const captureImage = () => {
+  //   const context = this.canvas.getContext('2d')
+  //   context.drawImage(this.videoStream, 0, 0, 800, 600)
+
+  //   const image = this.canvas.toDataURL('image/jpeg', 0.5)
+  //   return image
+  // }
+
+  const webcamRef = React.useRef(null)
+
+  const capture = React.useCallback(
+    () => {
+      const imageSrc = webcamRef.current.getScreenshot()
+      setImage(imageSrc)
+    },
+    [webcamRef]
+  )
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -28,8 +56,30 @@ const Register = () => {
     setIsLoading(false)
   }
 
+  const sizeImg = 200
+
   return (
     <>
+      <Webcam
+        audio={false}
+        ref={webcamRef}
+        screenshotFormat="image/jpeg"
+        height={sizeImg}
+        width={sizeImg}
+        videoConstraints={{ facingMode: 'user' }}
+        style={{ borderRadius: '7px' }}
+      />
+      <br />
+      <Button variant="primary" onClick={capture}>
+        {'Take picture'}
+      </Button>
+      <br />
+      {
+        image
+          ? <img src={image} width={sizeImg} height={sizeImg} style={{ borderRadius: '50%' }} />
+          : null
+      }
+
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="photo">
           <Form.Label>Selfie</Form.Label>
