@@ -292,7 +292,7 @@ const Question = ({ question, userId: questionUserId, questionUsername, answers 
               {'Answered by '}{a.appUser.username}
               <br />
               {
-                globalUser.id === a.appUser.id
+                globalUser.id === a.appUser.id || globalUser.role === 'ADMIN'
                   ? (
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <a href="#" style={{ textDecoration: 'underline' }} onClick={() => {
