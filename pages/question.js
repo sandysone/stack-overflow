@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useGlobal } from 'reactn'
 import ListGroup from 'react-bootstrap/ListGroup'
+import Spinner from 'react-bootstrap/Spinner'
 import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
@@ -41,36 +42,74 @@ mutation answer($answerId: ID!, $userId: ID!, $answer: String!) {
 }
 `
 
-const Question = ({ question }) => {
-  const [user] = useGlobal()
+const Question = ({ question, userId: questionUserId }) => {
+  console.log({ questionUserId })
+  const [globalUser] = useGlobal()
+  const [isLoading, setIsLoading] = useState(false)
   const [showEditQuestion, setShowEditQuestion] = useState(false)
   const [showDeleteQuestion, setShowDeleteQuestion] = useState(false)
+
+  const [stateQuestion, setStateQuestion] = useState(question)
 
   const handleToggleEditQuestion = () => setShowEditQuestion(!showEditQuestion)
   const handleToggleDeleteQuestion = () => setShowDeleteQuestion(!showDeleteQuestion)
 
-  if (typeof window !== 'undefined' && !user.username) {
+  if (typeof window !== 'undefined' && !globalUser.username) {
     Router.push('/')
   }
 
   const handleSubmit = (id) => (event) => {
     event.preventDefault()
+    setIsLoading(true)
 
     const { answer } = event.target
 
     console.log(answer.value, id)
+    setIsLoading(false)
   }
 
-  const handleEditQuestion = () => { }
-  const handleDeleteQuestion = () => { }
+  const handleSubmitEditQuestion = (questionId) => async (event) => {
+    event.preventDefault()
+    setIsLoading(true)
+
+    const { title, description } = event.target
+
+    const editQuestionQuery = `
+    mutation editQuestion($id: ID!, $title: String!, $description: String!) {
+      updateQuestion(where: {id: $id}, data: {title:$title, description:$description}) {
+        id
+        title
+        description
+      }
+    }`
+
+    const { updateQuestion } = await graphQLClient.request(
+      editQuestionQuery,
+      { title: title.value, description: description.value, id: questionId }
+    )
+
+    setStateQuestion(updateQuestion)
+    setIsLoading(false)
+    handleToggleEditQuestion()
+  }
+
+  const handleDeleteQuestion = () => {
+    const deleteQuestionQuery = `
+    mutation deleteQuestion($id: ID!) {
+      deleteQuestion(where: {id: $id}) {
+        id
+      }
+    }
+    `
+  }
 
   return (
     <>
-      <h3>{question?.title}</h3>
-      <p>{question?.description}</p>
+      <h3>{stateQuestion?.title}</h3>
+      <p>{stateQuestion?.description}</p>
 
       {
-        question?.appUser?.id === user.id || user.role === 'ADMIN'
+        questionUserId === globalUser.id || globalUser.role === 'ADMIN'
           ? (
             <>
               <Button variant="outline-secondary" onClick={handleToggleEditQuestion}>
@@ -86,23 +125,31 @@ const Question = ({ question }) => {
 
       <Modal show={showEditQuestion} onHide={handleToggleEditQuestion}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Edit Question</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleToggleEditQuestion}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleToggleEditQuestion}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
+        <Modal.Body>
+          <Form onSubmit={handleSubmitEditQuestion(stateQuestion?.id)}>
+            <Form.Group controlId="title">
+              <Form.Label>Title</Form.Label>
+              <Form.Control defaultValue={stateQuestion?.title} />
+            </Form.Group>
+
+            <Form.Group controlId="description">
+              <Form.Label>Description</Form.Label>
+              <Form.Control as="textarea" rows="3" defaultValue={stateQuestion?.description} />
+            </Form.Group>
+
+            <Button variant="primary" type="submit" disabled={isLoading}>
+              {isLoading ? <Spinner animation="border" size="sm" /> : 'Save Changes'}
+            </Button>
+          </Form>
+        </Modal.Body>
       </Modal>
 
       <br />
       <br />
 
-      <Form onSubmit={handleSubmit(user.id)}>
+      <Form onSubmit={handleSubmit(globalUser.id)}>
         <Form.Group controlId="answer">
           <Form.Label>Answer</Form.Label>
           <Form.Control as="textarea" rows="3" />
@@ -120,6 +167,7 @@ Question.getInitialProps = async ({ query }) => {
   const queryQuestion = `
   query question($id: ID!) {
     question(where: {id: $id}) {
+      id
       title
       description
       appUser {
@@ -133,7 +181,7 @@ Question.getInitialProps = async ({ query }) => {
   const { question } = await graphQLClient.request(queryQuestion, { id: query.id })
   console.log(question)
 
-  return { question }
+  return { question, userId: question.appUser.id }
 }
 
 export default Question
