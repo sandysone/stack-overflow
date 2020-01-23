@@ -56,6 +56,10 @@ const Question = ({ question, userId: questionUserId, questionUsername, answers 
     Router.push('/')
   }
 
+  // Only one answer logic
+  const userAnswers = answers.filter(a => a.appUser.id === globalUser.id)
+  const hasAnswer = userAnswers.length > 0
+
   const handleSubmit = (id) => async (event) => {
     event.preventDefault()
     setIsLoading(true)
@@ -122,6 +126,7 @@ const Question = ({ question, userId: questionUserId, questionUsername, answers 
     console.log(deleteAnswer)
 
     setIsLoading(false)
+    handleToggleDeleteAnswer()
   }
 
   const handleSubmitEditQuestion = (questionId) => async (event) => {
@@ -172,6 +177,8 @@ const Question = ({ question, userId: questionUserId, questionUsername, answers 
 
   return (
     <>
+      <a href="#" onClick={() => Router.push('/questions')}>&larr; Home</a>
+      <br />
       <h3>{stateQuestion?.title}</h3>
       <p>{stateQuestion?.description}</p>
       <small>Asked by {questionUsername}</small>
@@ -308,16 +315,22 @@ const Question = ({ question, userId: questionUserId, questionUsername, answers 
 
       <br />
 
-      <Form onSubmit={handleSubmit(globalUser.id)}>
-        <Form.Group controlId="answer">
-          <Form.Label>Your Answer</Form.Label>
-          <Form.Control as="textarea" rows="3" />
-        </Form.Group>
+      {
+        hasAnswer
+          ? null
+          : (
+            <Form onSubmit={handleSubmit(globalUser.id)}>
+              <Form.Group controlId="answer">
+                <Form.Label>Your Answer</Form.Label>
+                <Form.Control as="textarea" rows="3" />
+              </Form.Group>
 
-        <Button variant="primary" type="submit">
-          {isLoading ? <Spinner animation="border" size="sm" /> : 'Post Answer'}
-        </Button>
-      </Form>
+              <Button variant="primary" type="submit">
+                {isLoading ? <Spinner animation="border" size="sm" /> : 'Post Answer'}
+              </Button>
+            </Form>
+          )
+      }
     </>
   )
 }
