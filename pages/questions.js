@@ -40,7 +40,7 @@ const Questions = ({ questions }) => {
 Questions.getInitialProps = async () => {
   const queryQuestions = `
     query questions {
-      questions {
+      questions(orderBy: updatedAt_DESC) {
         id
         title
       }

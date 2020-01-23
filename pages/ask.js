@@ -62,6 +62,9 @@ const Ask = () => {
         <Button variant="primary" type="submit" disabled={isLoading}>
           {isLoading ? <Spinner animation="border" size="sm" /> : 'Post Question'}
         </Button>
+        <Button variant="outline-secondary" onClick={() => Router.push('/questions')}>
+          {'Cancel'}
+        </Button>
       </Form>
     </>
   )
