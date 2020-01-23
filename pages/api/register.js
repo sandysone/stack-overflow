@@ -11,12 +11,13 @@ const register = async (request, response) => {
     createAppUser(data: {username: $username, password: $password}) {
       id
       username
+      role
     }
   }`
 
   const { createAppUser } = await graphQLClient.request(createUserQuery, { username, password: hashedPassword })
 
-  response.status(200).json({ data: { id: createAppUser.id, username: createAppUser.username, valid: true } })
+  response.status(200).json({ data: { id: createAppUser.id, username: createAppUser.username, valid: true, role: createAppUser.role } })
 }
 
 export default register

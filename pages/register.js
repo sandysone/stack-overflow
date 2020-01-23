@@ -20,10 +20,8 @@ const Register = () => {
 
     const content = await nativeFetcher('/register', 'POST', { username: username.value, password: password.value })
 
-    console.log(content)
-
     if (content.data?.valid) {
-      setUser({ id: content.data.id, username: content.data.username })
+      setUser({ id: content.data.id, username: content.data.username, role: content.data.role })
       Router.push('/questions')
     }
 

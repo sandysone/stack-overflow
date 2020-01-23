@@ -10,15 +10,15 @@ import { graphQLClient } from './api/_client'
 const createQuestion = `
 mutation ask($title: String!, $description: String!, $userId: ID!) {
   updateAppUser(data: {questions: {create: {title: $title, description: $description}}}, where: {id: $userId}) {
-    id
+    questions(orderBy: createdAt_DESC, first: 1) {
+      id
+    }
   }
-}
-`
+}`
 
 const Ask = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [user] = useGlobal()
-  console.log(user.username)
 
   if (typeof window !== 'undefined' && !user.username) {
     Router.push('/')
@@ -30,17 +30,19 @@ const Ask = () => {
 
     const { title, description } = event.target
 
-    console.log(title.value, description.value, id)
-
+    // const response = await graphQLClient.request(
+    //   createQuestion,
+    //   { title: title.value, description: description.value, userId: id }
+    // )
     const response = await graphQLClient.request(
       createQuestion,
-      { title: title.value, description: description.value, userId: id }
+      { title: 'Why Javascript?', description: 'Why not Typescript?', userId: id }
     )
 
     setIsLoading(false)
 
-    if (response?.updateAppUser) {
-      Router.push('/question?id=' + response.updateAppUser.id)
+    if (response?.updateAppUser?.questions?.[0]) {
+      Router.push('/question?id=' + response.updateAppUser.questions[0].id)
     }
   }
 

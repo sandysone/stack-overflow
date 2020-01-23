@@ -11,6 +11,7 @@ const login = async (request, response) => {
       id
       username
       password
+      role
     }
   }`
 
@@ -18,7 +19,7 @@ const login = async (request, response) => {
 
   const valid = await bcrypt.compare(password, String(appUser?.password))
 
-  response.status(200).json({ data: { valid, id: appUser?.id, username: appUser?.username } })
+  response.status(200).json({ data: { valid, id: appUser?.id, username: appUser?.username, role: appUser?.role } })
 }
 
 export default login
