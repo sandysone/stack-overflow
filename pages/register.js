@@ -57,6 +57,8 @@ const Register = () => {
   }
 
   const sizeImg = 200
+  const heightImg = 200
+  const widthImg = 100
 
   return (
     <>
@@ -64,8 +66,8 @@ const Register = () => {
         audio={false}
         ref={webcamRef}
         screenshotFormat="image/jpeg"
-        height={sizeImg}
-        width={sizeImg}
+        height={heightImg}
+        width={widthImg}
         videoConstraints={{ facingMode: 'user' }}
         style={{ borderRadius: '7px' }}
       />
@@ -76,7 +78,7 @@ const Register = () => {
       <br />
       {
         image
-          ? <img src={image} width={sizeImg} height={sizeImg} style={{ borderRadius: '50%' }} />
+          ? <img src={image} width={widthImg} height={heightImg} style={{ borderRadius: '50%' }} />
           : null
       }
 
