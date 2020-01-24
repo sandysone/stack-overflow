@@ -6,29 +6,13 @@ import Link from 'next/link'
 import Router from 'next/router'
 import { useState } from 'react'
 import Webcam from 'react-webcam'
-// import { usePermission } from 'react-use'
 
 import { nativeFetcher } from '../lib/fetcher'
 
 const Register = () => {
-  // const state = usePermission({ name: 'camera' })
   const [isLoading, setIsLoading] = useState(false)
   const [image, setImage] = useState('')
   const [user, setUser] = useGlobal()
-
-  // if (typeof window !== 'undefined') {
-  //   navigator.getUserMedia({ video: true }, (localMediaStream) => {
-  //     console.log(localMediaStream)
-  //   }, (error) => { })
-  // }
-
-  // const captureImage = () => {
-  //   const context = this.canvas.getContext('2d')
-  //   context.drawImage(this.videoStream, 0, 0, 800, 600)
-
-  //   const image = this.canvas.toDataURL('image/jpeg', 0.5)
-  //   return image
-  // }
 
   const webcamRef = React.useRef(null)
 
@@ -46,10 +30,21 @@ const Register = () => {
 
     const { username, password } = event.target
 
-    const content = await nativeFetcher('/register', 'POST', { username: username.value, password: password.value })
+    const content = await nativeFetcher('/register', 'POST', {
+      username: username.value,
+      password: password.value,
+      lat: 0,
+      lon: 0,
+      selfie64: image
+    })
 
     if (content.data?.valid) {
-      setUser({ id: content.data.id, username: content.data.username, role: content.data.role })
+      setUser({
+        id: content.data.id,
+        username: content.data.username,
+        role: content.data.role,
+        selfie64: content.data.selfie64
+      })
       Router.push('/questions')
     }
 
@@ -57,36 +52,32 @@ const Register = () => {
   }
 
   const sizeImg = 200
-  const heightImg = 200
-  const widthImg = 100
+  // const heightImg = 200
+  // const widthImg = 100
 
   return (
     <>
-      <Webcam
-        audio={false}
-        ref={webcamRef}
-        screenshotFormat="image/jpeg"
-        height={heightImg}
-        width={widthImg}
-        videoConstraints={{ facingMode: 'user' }}
-        style={{ borderRadius: '7px' }}
-      />
-      <br />
-      <Button variant="primary" onClick={capture}>
-        {'Take picture'}
-      </Button>
-      <br />
-      {
-        image
-          ? <img src={image} width={widthImg} height={heightImg} style={{ borderRadius: '50%' }} />
-          : null
-      }
-
       <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="photo">
-          <Form.Label>Selfie</Form.Label>
-          <Form.Control type="file" capture="camera" accept="image/*" />
-        </Form.Group>
+        <h4>Take a selfie</h4>
+        <Webcam
+          audio={false}
+          ref={webcamRef}
+          screenshotFormat="image/jpeg"
+          height={sizeImg}
+          width={sizeImg}
+          videoConstraints={{ facingMode: 'user' }}
+          style={{ borderRadius: 10 }}
+        />
+        <br />
+        <Button variant="primary" onClick={capture}>
+          {'Take picture'}
+        </Button>
+        <br />
+        {
+          image
+            ? <img src={image} width={sizeImg} height={sizeImg} style={{ borderRadius: '50%' }} />
+            : null
+        }
 
         <Form.Group controlId="username">
           <Form.Label>Username</Form.Label>
