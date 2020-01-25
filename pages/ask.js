@@ -30,14 +30,14 @@ const Ask = () => {
 
     const { title, description } = event.target
 
-    // const response = await graphQLClient.request(
-    //   createQuestion,
-    //   { title: title.value, description: description.value, userId: id }
-    // )
     const response = await graphQLClient.request(
       createQuestion,
-      { title: 'Why Javascript?', description: 'Why not Typescript?', userId: id }
+      { title: title.value, description: description.value, userId: id }
     )
+    // const response = await graphQLClient.request(
+    //   createQuestion,
+    //   { title: 'Why Javascript?', description: 'Why not Typescript?', userId: id }
+    // )
 
     setIsLoading(false)
 
