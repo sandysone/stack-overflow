@@ -34,7 +34,7 @@ mutation answer($answerId: ID!, $userId: ID!, $answer: String!) {
 }
 `
 
-const Question = ({ question, userId: questionUserId, questionUsername, answers }) => {
+const Question = ({ question, userId: questionUserId, questionUsername, answers, img }) => {
   const [globalUser] = useGlobal()
   const [isLoading, setIsLoading] = useState(false)
   const [showEditQuestion, setShowEditQuestion] = useState(false)
@@ -175,13 +175,17 @@ const Question = ({ question, userId: questionUserId, questionUsername, answers 
     Router.push('/questions')
   }
 
+  const size = 30
   return (
     <>
       <a href="#" onClick={() => Router.push('/questions')}>&larr; Home</a>
       <br />
       <h3>{stateQuestion?.title}</h3>
       <p>{stateQuestion?.description}</p>
-      <small>Asked by {questionUsername}</small>
+      <small>
+        <img style={{ borderRadius: '50%' }} width={size} height={size} src={img} />
+        {'Asked by '}{questionUsername}
+      </small>
 
       <br />
       <br />
@@ -289,6 +293,7 @@ const Question = ({ question, userId: questionUserId, questionUsername, answers 
           <div key={a.id} style={{ backgroundColor: '#eee', borderRadius: '5px', padding: '7px 9px' }}>
             <p>{a.answer}</p>
             <small>
+              <img style={{ borderRadius: '50%' }} width={size} height={size} src={a.appUser.selfie64} />
               {'Answered by '}{a.appUser.username}
               <br />
               {
@@ -348,11 +353,13 @@ Question.getInitialProps = async ({ query }) => {
         appUser {
           id
           username
+          selfie64
         }
       }
       appUser {
         id
         username
+        selfie64
       }
     }
   }`
@@ -363,6 +370,7 @@ Question.getInitialProps = async ({ query }) => {
     question,
     userId: question.appUser.id,
     questionUsername: question.appUser.username,
+    img: question.appUser.selfie64,
     answers: question.answers
   }
 }

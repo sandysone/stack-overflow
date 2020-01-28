@@ -3,13 +3,16 @@ import Button from 'react-bootstrap/Button'
 import Link from 'next/link'
 import Router from 'next/router'
 
+const size = 60
+
 export const NavigationBar = ({ username, img }) => {
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Brand>Stack Overflow</Navbar.Brand>
       <Navbar.Text>Logged as {username?.toUpperCase()}</Navbar.Text>
-      <Navbar.Text><img width={100} height={100} src={img} /></Navbar.Text>
-
+      <Navbar.Text>
+        <img style={{ borderRadius: '50%' }} width={size} height={size} src={img} />
+      </Navbar.Text>
       <Link href="/ask">
         <Button variant="primary">
           {'Ask Question'}

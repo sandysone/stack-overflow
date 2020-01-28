@@ -22,7 +22,7 @@ const Index = () => {
     // const content = await nativeFetcher('/login', 'POST', { username: 'router', password: 'router' })
 
     if (content.data?.valid) {
-      setUser({ id: content.data.id, username: content.data.username, role: content.data.role })
+      setUser({ id: content.data.id, username: content.data.username, role: content.data.role, selfie64: content.data.selfie64 })
       Router.push('/questions')
     }
 

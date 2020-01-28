@@ -6,10 +6,12 @@ import Link from 'next/link'
 import Router from 'next/router'
 import { useState } from 'react'
 import Webcam from 'react-webcam'
+import { useGeolocation } from 'react-recipes'
 
 import { nativeFetcher } from '../lib/fetcher'
 
 const Register = () => {
+  const { latitude, longitude } = useGeolocation()
   const [isLoading, setIsLoading] = useState(false)
   const [image, setImage] = useState('')
   const [user, setUser] = useGlobal()
@@ -33,9 +35,9 @@ const Register = () => {
     const content = await nativeFetcher('/register', 'POST', {
       username: username.value,
       password: password.value,
-      lat: 0,
-      lon: 0,
-      selfie64: image
+      lat: latitude || 0,
+      lon: longitude || 0,
+      selfie64: image || ''
     })
 
     if (content.data?.valid) {
@@ -52,8 +54,6 @@ const Register = () => {
   }
 
   const sizeImg = 200
-  // const heightImg = 200
-  // const widthImg = 100
 
   return (
     <>
