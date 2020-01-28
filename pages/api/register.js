@@ -10,9 +10,9 @@ const register = async (request, response) => {
   mutation register(
     $username: String!, 
     $password: String!, 
-    $lat: Float, 
-    $lon: Float, 
-    $selfie64: String
+    $lat: Float!, 
+    $lon: Float!, 
+    $selfie64: String!
     ) {
     createAppUser(data: {
       username: $username,

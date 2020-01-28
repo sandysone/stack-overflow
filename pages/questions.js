@@ -28,7 +28,7 @@ const Questions = ({ questions }) => {
 
   return (
     <>
-      <NavigationBar username={user.username} />
+      <NavigationBar username={user.username} img={user.selfie64} />
 
       <ListGroup>
         {questions.map(mapQuestions)}
