@@ -82,6 +82,7 @@ const Question = ({ question, userId: questionUserId, questionUsername, answers,
     )
 
     setIsLoading(false)
+    Router.push('/question?id=' + question.id)
   }
 
   const handleEditAnswer = (answerId) => async (event) => {
