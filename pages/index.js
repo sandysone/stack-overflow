@@ -1,9 +1,10 @@
 import { useGlobal } from 'reactn'
+import { useEffect, useState } from 'react'
 import ListGroup from 'react-bootstrap/ListGroup'
-import Router from 'next/router'
 import Link from 'next/link'
 
 import { graphQLClient } from './api/_client'
+import { parseCookie } from '../lib/cookie'
 import { NavigationBar } from '../components/Navbar'
 
 const mapQuestions = (question) => {
@@ -20,10 +21,16 @@ const mapQuestions = (question) => {
 
 const Questions = ({ questions }) => {
   const [user] = useGlobal()
+  const [userG, setUserG] = useState({})
+
+  useEffect(() => {
+    const cookieJS = parseCookie(document.cookie)
+    setUserG(cookieJS)
+  }, [])
 
   return (
     <>
-      <NavigationBar username={user.username} img={user.selfie64} />
+      <NavigationBar username={userG.username} img={user.selfie64} />
 
       <ListGroup>
         {questions.map(mapQuestions)}

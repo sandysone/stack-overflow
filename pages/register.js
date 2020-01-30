@@ -14,7 +14,7 @@ const Register = () => {
   const { latitude, longitude } = useGeolocation(true)
   const [isLoading, setIsLoading] = useState(false)
   const [image, setImage] = useState('')
-  const [user, setUser] = useGlobal()
+  const [, setUser] = useGlobal()
 
   const webcamRef = React.useRef(null)
 
@@ -47,6 +47,12 @@ const Register = () => {
         role: content.data.role,
         selfie64: content.data.selfie64
       })
+
+      document.cookie = `id=${content.data.id}`
+      document.cookie = `username=${content.data.username}`
+      document.cookie = `role=${content.data.role}`
+      document.cookie = `selfie64=${content.data.selfie64}`
+
       Router.push('/')
     }
 
@@ -97,7 +103,7 @@ const Register = () => {
       <br />
 
       <Link href="/login">
-        <a>Back to Login Page</a>
+        <a>Back to Login</a>
       </Link>
     </>
   )

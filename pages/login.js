@@ -10,7 +10,7 @@ import { nativeFetcher } from '../lib/fetcher'
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false)
-  const [user, setUser] = useGlobal()
+  const [, setUser] = useGlobal()
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -21,7 +21,18 @@ const Index = () => {
     const content = await nativeFetcher('/login', 'POST', { username: username.value, password: password.value })
 
     if (content.data?.valid) {
-      setUser({ id: content.data.id, username: content.data.username, role: content.data.role, selfie64: content.data.selfie64 })
+      setUser({
+        id: content.data.id,
+        username: content.data.username,
+        role: content.data.role,
+        selfie64: content.data.selfie64
+      })
+
+      document.cookie = `id=${content.data.id}`
+      document.cookie = `username=${content.data.username}`
+      document.cookie = `role=${content.data.role}`
+      document.cookie = `selfie64=${content.data.selfie64}`
+
       Router.push('/')
     }
 

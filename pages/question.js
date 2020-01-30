@@ -1,41 +1,15 @@
-import { useState } from 'react'
-import { useGlobal } from 'reactn'
-import ListGroup from 'react-bootstrap/ListGroup'
+import { useState, useEffect } from 'react'
 import Spinner from 'react-bootstrap/Spinner'
 import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import Link from 'next/link'
-import Head from 'next/head'
 import Router from 'next/router'
-import useSWR from 'swr'
 
 import { graphQLClient } from './api/_client'
-import { fetcherGraphQL } from '../lib/fetcher'
-import { Loading } from '../components/Loading'
-import { Error } from '../components/Error'
-
-const updateAnswerQuery = `
-mutation answer($answerId: ID!, $userId: ID!, $answer: String!) {
-  updateAppUser(data: {
-    answers: {
-      update: {
-        data: {answer: $answer}
-        where: {
-          id: $answerId
-        }
-      }
-    }
-  }, 
-    where: {id: $userId
-    }) {
-    id
-  }
-}
-`
+import { parseCookie } from '../lib/cookie'
 
 const Question = ({ question, userId: questionUserId, questionUsername, answers, img }) => {
-  const [globalUser] = useGlobal()
+  const [userG, setUserG] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const [showEditQuestion, setShowEditQuestion] = useState(false)
   const [showDeleteQuestion, setShowDeleteQuestion] = useState(false)
@@ -52,8 +26,15 @@ const Question = ({ question, userId: questionUserId, questionUsername, answers,
   const handleToggleEditAnswer = () => setShowEditAnswer(!showEditAnswer)
   const handleToggleDeleteAnswer = () => setShowDeleteAnswer(!showDeleteAnswer)
 
+  const isNotLogged = !userG.id
+
+  useEffect(() => {
+    const cookieJS = parseCookie(document.cookie)
+    setUserG(cookieJS)
+  }, [])
+
   // Only one answer logic
-  const userAnswers = answers.filter(a => a.appUser.id === globalUser.id)
+  const userAnswers = answers.filter(a => a.appUser.id === userG.id)
   const hasAnswer = userAnswers.length > 0
 
   const handleSubmit = (id) => async (event) => {
@@ -77,7 +58,6 @@ const Question = ({ question, userId: questionUserId, questionUsername, answers,
       { answer: answer.value, userId: id, questionId: stateQuestion?.id }
     )
 
-    setIsLoading(false)
     Router.push('/question?id=' + question.id)
   }
 
@@ -119,8 +99,6 @@ const Question = ({ question, userId: questionUserId, questionUsername, answers,
       deleteAnswerQuery,
       { id: answerId }
     )
-
-    console.log(deleteAnswer)
 
     setIsLoading(false)
     handleToggleDeleteAnswer()
@@ -166,16 +144,13 @@ const Question = ({ question, userId: questionUserId, questionUsername, answers,
       { id }
     )
 
-    console.log(deleteQuestion)
-
-    setIsLoading(false)
-    Router.push('/questions')
+    Router.push('/')
   }
 
-  const size = 30
+  const size = 25
   return (
     <>
-      <a href="#" onClick={() => Router.push('/questions')}>&larr; Home</a>
+      <a href="#" onClick={() => Router.push('/')}>&larr; Home</a>
       <br />
       <h3>{stateQuestion?.title}</h3>
       <p>{stateQuestion?.description}</p>
@@ -188,7 +163,7 @@ const Question = ({ question, userId: questionUserId, questionUsername, answers,
       <br />
 
       {
-        questionUserId === globalUser.id || globalUser.role === 'ADMIN'
+        questionUserId === userG.id || userG.role === 'ADMIN'
           ? (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <a href="#" style={{ textDecoration: 'underline' }} onClick={handleToggleEditQuestion}>
@@ -294,7 +269,7 @@ const Question = ({ question, userId: questionUserId, questionUsername, answers,
               {'Answered by '}{a.appUser.username}
               <br />
               {
-                globalUser.id === a.appUser.id || globalUser.role === 'ADMIN'
+                userG.id === a.appUser.id || userG.role === 'ADMIN'
                   ? (
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <a href="#" style={{ textDecoration: 'underline' }} onClick={() => {
@@ -321,14 +296,19 @@ const Question = ({ question, userId: questionUserId, questionUsername, answers,
         hasAnswer
           ? null
           : (
-            <Form onSubmit={handleSubmit(globalUser.id)}>
+            <Form onSubmit={handleSubmit(userG.id)}>
               <Form.Group controlId="answer">
                 <Form.Label>Your Answer</Form.Label>
                 <Form.Control as="textarea" rows="3" />
               </Form.Group>
 
-              <Button variant="primary" type="submit">
-                {isLoading ? <Spinner animation="border" size="sm" /> : 'Post Answer'}
+              <Button variant="primary" type="submit" disabled={isNotLogged || isLoading}>
+                {isNotLogged
+                  ? 'Must login to answer'
+                  : isLoading
+                    ? <Spinner animation="border" size="sm" />
+                    : 'Post Answer'
+                }
               </Button>
             </Form>
           )

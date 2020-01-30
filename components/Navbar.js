@@ -6,7 +6,6 @@ import Router from 'next/router'
 const size = 60
 
 export const NavigationBar = ({ username, img }) => {
-  console.log({ username, u: Boolean(username) })
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Brand>Stack Overflow</Navbar.Brand>
@@ -37,7 +36,10 @@ export const NavigationBar = ({ username, img }) => {
             <Button variant="outline-secondary" onClick={() => {
               document.cookie = `id=; expires=Thu, 01 Jan 1970 00:00:01 GMT`
               document.cookie = `username=; expires=Thu, 01 Jan 1970 00:00:01 GMT`
-              Router.push('/login')
+              document.cookie = `role=; expires=Thu, 01 Jan 1970 00:00:01 GMT`
+              document.cookie = `selfie64=; expires=Thu, 01 Jan 1970 00:00:01 GMT`
+
+              Router.push('/')
             }}>
               {'Logout'}
             </Button>
