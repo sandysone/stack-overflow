@@ -11,7 +11,7 @@ import { useGeolocation } from 'react-recipes'
 import { nativeFetcher } from '../lib/fetcher'
 
 const Register = () => {
-  const { latitude, longitude } = useGeolocation()
+  const { latitude, longitude } = useGeolocation(true)
   const [isLoading, setIsLoading] = useState(false)
   const [image, setImage] = useState('')
   const [user, setUser] = useGlobal()

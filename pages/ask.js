@@ -20,10 +20,6 @@ const Ask = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [user] = useGlobal()
 
-  if (typeof window !== 'undefined' && !user.username) {
-    Router.push('/')
-  }
-
   const handleSubmit = (id) => async (event) => {
     event.preventDefault()
     setIsLoading(true)

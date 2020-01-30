@@ -20,11 +20,6 @@ const mapQuestions = (question) => {
 
 const Questions = ({ questions }) => {
   const [user] = useGlobal()
-  console.log(user.username)
-
-  if (typeof window !== 'undefined' && !user.username) {
-    Router.push('/')
-  }
 
   return (
     <>

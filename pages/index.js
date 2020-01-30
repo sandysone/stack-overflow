@@ -19,7 +19,6 @@ const Index = () => {
     const { username, password } = event.target
 
     const content = await nativeFetcher('/login', 'POST', { username: username.value, password: password.value })
-    // const content = await nativeFetcher('/login', 'POST', { username: 'router', password: 'router' })
 
     if (content.data?.valid) {
       setUser({ id: content.data.id, username: content.data.username, role: content.data.role, selfie64: content.data.selfie64 })

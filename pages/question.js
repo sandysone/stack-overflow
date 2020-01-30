@@ -52,10 +52,6 @@ const Question = ({ question, userId: questionUserId, questionUsername, answers,
   const handleToggleEditAnswer = () => setShowEditAnswer(!showEditAnswer)
   const handleToggleDeleteAnswer = () => setShowDeleteAnswer(!showDeleteAnswer)
 
-  if (typeof window !== 'undefined' && !globalUser.username) {
-    Router.push('/')
-  }
-
   // Only one answer logic
   const userAnswers = answers.filter(a => a.appUser.id === globalUser.id)
   const hasAnswer = userAnswers.length > 0
