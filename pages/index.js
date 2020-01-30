@@ -20,17 +20,25 @@ const mapQuestions = (question) => {
 }
 
 const Questions = ({ questions }) => {
-  const [user] = useGlobal()
   const [userG, setUserG] = useState({})
 
   useEffect(() => {
     const cookieJS = parseCookie(document.cookie)
+    const cookieEntries = Object.entries(cookieJS)
+    const filteredEntries = cookieEntries.filter((v) => v[0].includes('selfie64'))
+    const sortedEntries = filteredEntries.sort((a, b) => a[0] - b[0])
+    const mappedEntries = sortedEntries.map(e => e[1])
+    const joinedEntries = mappedEntries.join('')
+    const addBase64 = joinedEntries.replace('base64', ';base64')
+    const addEqual = addBase64 + '='
+
+    cookieJS.selfie64 = addEqual
     setUserG(cookieJS)
   }, [])
 
   return (
     <>
-      <NavigationBar username={userG.username} img={user.selfie64} />
+      <NavigationBar username={userG.username} img={userG.selfie64} />
 
       <ListGroup>
         {questions.map(mapQuestions)}

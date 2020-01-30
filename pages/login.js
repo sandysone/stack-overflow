@@ -7,6 +7,7 @@ import Router from 'next/router'
 import { useState } from 'react'
 
 import { nativeFetcher } from '../lib/fetcher'
+import { chunks } from '../lib/cookie'
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -31,12 +32,17 @@ const Index = () => {
       document.cookie = `id=${content.data.id}`
       document.cookie = `username=${content.data.username}`
       document.cookie = `role=${content.data.role}`
-      document.cookie = `selfie64=${content.data.selfie64}`
+
+      const chunkedSelfie = chunks(content.data.selfie64.split(''), 1000)
+      chunkedSelfie.forEach((c, i) => {
+        const jointed = c.join('')
+        const removedSemicolon = jointed.replace(';', '')
+        const removedEqual = removedSemicolon.replace('=', '')
+        document.cookie = `selfie64_${i}=${removedEqual}`
+      })
 
       Router.push('/')
     }
-
-    setIsLoading(false)
   }
 
   return (

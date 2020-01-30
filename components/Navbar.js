@@ -3,6 +3,8 @@ import Button from 'react-bootstrap/Button'
 import Link from 'next/link'
 import Router from 'next/router'
 
+import { parseCookie } from '../lib/cookie'
+
 const size = 60
 
 export const NavigationBar = ({ username, img }) => {
@@ -34,12 +36,14 @@ export const NavigationBar = ({ username, img }) => {
         username
           ? (
             <Button variant="outline-secondary" onClick={() => {
-              document.cookie = `id=; expires=Thu, 01 Jan 1970 00:00:01 GMT`
-              document.cookie = `username=; expires=Thu, 01 Jan 1970 00:00:01 GMT`
-              document.cookie = `role=; expires=Thu, 01 Jan 1970 00:00:01 GMT`
-              document.cookie = `selfie64=; expires=Thu, 01 Jan 1970 00:00:01 GMT`
+              const cookieJS = parseCookie(document.cookie)
+              const cookieEntries = Object.entries(cookieJS)
 
-              Router.push('/')
+              cookieEntries.forEach(c => {
+                document.cookie = `${c[0]}=; expires=Thu, 01 Jan 1970 00:00:01 GMT`
+              })
+
+              Router.reload()
             }}>
               {'Logout'}
             </Button>
