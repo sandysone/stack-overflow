@@ -47,7 +47,7 @@ const Register = () => {
         role: content.data.role,
         selfie64: content.data.selfie64
       })
-      Router.push('/questions')
+      Router.push('/')
     }
 
     setIsLoading(false)
@@ -96,7 +96,7 @@ const Register = () => {
 
       <br />
 
-      <Link href="/">
+      <Link href="/login">
         <a>Back to Login Page</a>
       </Link>
     </>
