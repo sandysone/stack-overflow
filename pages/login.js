@@ -34,11 +34,14 @@ const Index = () => {
       document.cookie = `role=${content.data.role}`
 
       const chunkedSelfie = chunks(content.data.selfie64.split(''), 1000)
+      localStorage.setItem('size', chunkedSelfie.length)
+
       chunkedSelfie.forEach((c, i) => {
         const jointed = c.join('')
         const removedSemicolon = jointed.replace(';', '')
         const removedEqual = removedSemicolon.replace('=', '')
-        document.cookie = `selfie64_${i}=${removedEqual}`
+        // document.cookie = `selfie64_${i}=${removedEqual}`
+        localStorage.setItem(`selfie64_${i}`, `${removedEqual}`)
       })
 
       Router.push('/')
